@@ -3,19 +3,22 @@ const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 
 const productRoutes = require("./api/routes/products");
 const stockRoutes = require("./api/routes/stocks");
 const categoryRoutes = require("./api/routes/categories");
 
-mongoose.connect(
-  "mongodb+srv://admin:" +
-    process.env.MONGO_ATLAS_PW +
-    "@cluster0.glpte.mongodb.net/ZURI-RECEIPT-GENERATOR?retryWrites=true&w=majority",
-  { useNewUrlParser: true, useUnifiedTopology: true }
-);
-
-mongoose.Promise = global.Promise;
+dotenv.config();
+mongoose
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: true,
+  })
+  .then(console.log("Connected to MongoDB"))
+  .catch((err) => console.log(err));
 
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
